@@ -10,12 +10,13 @@ namespace DDRPG
 {
     public class Combat
     {
-        private Character[] _enemies;
-        private Character[] _party;
+        public Character[] _enemies;
+        public Character[] _party;
         private Character[] que;
         private KeyboardState ks;
+        private KeyboardState prevKs;
         private int pos = 0;
-        private int index = 0;
+        public int index = 0;
         private bool targeting = false;
         private int target = 0;
         public Combat(Character[] party, Character[] enemy)
@@ -43,32 +44,37 @@ namespace DDRPG
         }
 
 
-        public void Update()
+        public bool Update()
         {
+            if (hpSum(_party) || hpSum(_enemies))
+            {
+                return false;
+            }
+
             if (que[index].PC)
             {
                 ks = Keyboard.GetState();
-                if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && !targeting)
+                if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && !targeting && ks != prevKs)
                 {
                     pos = 1;
                 }
-                else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && !targeting)
+                else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && !targeting && ks != prevKs)
                 {
                     pos = 0;
                 }
-                if (ks.IsKeyDown(Keys.Space) && !targeting)
+                if (ks.IsKeyDown(Keys.Space) && !targeting && ks != prevKs)
                 {
                     targeting = true;
                 }
-                if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && targeting)
+                if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && targeting && ks != prevKs)
                 {
                     target++;
-                    if(target > _enemies.Length)
+                    if(target >= _enemies.Length)
                     {
                         target = 0;
                     }
                 }
-                else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && targeting)
+                else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && targeting && ks != prevKs)
                 {
                     target--;
                     if (target < 0)
@@ -76,7 +82,7 @@ namespace DDRPG
                         target = _enemies.Length - 1;
                     }
                 }
-                if (ks.IsKeyDown(Keys.Space) && targeting)
+                if (ks.IsKeyDown(Keys.Space) && targeting && ks != prevKs)
                 {
                     if(pos == 0)
                     {
@@ -84,16 +90,35 @@ namespace DDRPG
                     }
                     else
                     {
-                        que[index].magicalAttack(_enemies[target]);
+                        que[index].magicalAttack(_enemies[target]);  
                     }
+                    targeting = false;
                     index++;
                 }
             }
             else
             {
-
+                Random rn = new Random();
+                index = rn.Next(0, _party.Length - 1);
+                que[index].phisicalAttack(_party[index]);
             }
-            
+            prevKs = ks;
+            return true;
+        }
+
+
+        public bool hpSum(Character[] hpcheck)
+        {
+            int sum = 0;
+            foreach(Character c in hpcheck)
+            {
+                sum += c.hp;
+            }
+            if(sum == 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont sf)
@@ -109,9 +134,13 @@ namespace DDRPG
             position = new Vector2(1080, 50);
             foreach (Character c in _enemies)
             {
-                spriteBatch.Draw(c.texture, position, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0);
-                spriteBatch.DrawString(sf, "Hp: " + c.hp.ToString(), position - new Vector2(100, 15), Color.White);
-                position.Y += 100;
+                if(c.hp > 0)
+                {
+                    spriteBatch.Draw(c.texture, position, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0);
+                    spriteBatch.DrawString(sf, "Hp: " + c.hp.ToString(), position - new Vector2(100, 15), Color.White);
+                    position.Y += 100;
+                }
+                
             }
             position = new Vector2(1080 , 25 + 100 * target);
             spriteBatch.DrawString(sf, "Target", position - new Vector2(100, 15), Color.White);

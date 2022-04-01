@@ -62,6 +62,10 @@ namespace DDRPG
             else
             {
                 target.hp -= str + lvl-target.def; 
+                if(target.hp < 0)
+                {
+                    target.hp = 0;
+                }
             }
         }
         //basic magic attack function
@@ -74,6 +78,10 @@ namespace DDRPG
             else
             {
                 target.hp -= mgc + lvl - target.def;
+                if (target.hp < 0)
+                {
+                    target.hp = 0;
+                }
             }
         }
     }

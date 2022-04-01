@@ -33,8 +33,9 @@ namespace DDRPG
             // TODO: Add your initialization logic here
             _tilemap = new Tilemap("map.txt");
             _player = new Player();
-            party = new Character[] { new Character(20, 20, 5, 5, 5, 2, 10, 5, 1, "speedMan", "overworldSprite") };
-            enemy = new Character[] { new Character(20, 20, 5, 5, 5, 2, 1, 5, 1, "bad dude", "overworldSprite") };
+            //hp hpmax mp mpmax str mgc spd def lvl
+            party = new Character[] { new Character(20, 20, 5, 5, 6, 3, 10, 2, 1, "speedMan", "overworldSprite") };
+            enemy = new Character[] { new Character(20, 20, 5, 5, 5, 2, 1, 2, 1, "bad dude", "overworldSprite") };
             Combat = new Combat(party, enemy);
             base.Initialize();
         }
@@ -68,19 +69,77 @@ namespace DDRPG
                 _player.Update(gameTime, GraphicsDevice.Viewport);
                 if (_tilemap._map[(int)(_player.position.X + _player.position.Y * 10)] == 11)
                 {
-                    combat = true;
-                    _graphics.PreferredBackBufferWidth = 1280;
-                    _graphics.PreferredBackBufferHeight = 640;
-                    _graphics.ApplyChanges();
-                    //_tilemap._map[(int)(_player.position.X + _player.position.Y * 10)] = 12;
+                    if (Combat.hpSum(enemy))
+                    {
+                        _graphics.PreferredBackBufferWidth = 640;
+                        _graphics.PreferredBackBufferHeight = 640;
+                        _graphics.ApplyChanges();
+                        _tilemap._map[(int)(_player.position.X + _player.position.Y * 10)] = 12;
+                        generateEnemies();
+                    }
+                    else if (Combat.hpSum(party))
+                    {
+                        _graphics.PreferredBackBufferWidth = 640;
+                        _graphics.PreferredBackBufferHeight = 640;
+                        _graphics.ApplyChanges();
+                        int i = 0;
+                        foreach (Character c in Combat._party)
+                        {
+                            Combat._party[i].hp = Combat._party[i].maxhp;
+                            i++;
+                        }
+                        _player.position.X -= 1;
+                    }
+                    else
+                    {
+                        combat = true;
+                        _graphics.PreferredBackBufferWidth = 1280;
+                        _graphics.PreferredBackBufferHeight = 640;
+                        _graphics.ApplyChanges();
+                        Combat.index = 0;
+                        
+                    }
+
                 }
             }
             else
             {
-                Combat.Update();
+                combat = Combat.Update();
+                int i = 0;
+                foreach( Character c in Combat._enemies)
+                {
+                    enemy[i] = c;
+                    i++;
+                }
+                i = 0;
+                foreach (Character c in Combat._party)
+                {
+                    party[i] = c;
+                    i++;
+                }
             }
             
             base.Update(gameTime);
+        }
+
+
+        private void generateEnemies()
+        {
+            Random rng = new Random();
+            int mxhp = rng.Next(1, 30);
+            int mxmp = rng.Next(1, 10);
+            int i = 0;
+            foreach (Character c in Combat._enemies)
+            {
+                Combat._enemies[i] = new Character(mxhp, mxhp, mxmp, mxmp, rng.Next(1, 10), rng.Next(1, 10), rng.Next(1, 8), rng.Next(1, 10), rng.Next(1, 5), "bad dude", "overworldSprite");
+                Combat._enemies[i].LoadContent(Content);
+            }
+            i = 0;
+            foreach (Character c in Combat._enemies)
+            {
+                enemy[i] = c;
+                i++;
+            }
         }
 
         protected override void Draw(GameTime gameTime)
