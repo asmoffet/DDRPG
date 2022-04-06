@@ -34,8 +34,8 @@ namespace DDRPG
             _tilemap = new Tilemap("map.txt");
             _player = new Player();
             //hp hpmax mp mpmax str mgc spd def lvl
-            party = new Character[] { new Character(20, 20, 5, 5, 6, 3, 10, 2, 1, "speedMan", "overworldSprite") };
-            enemy = new Character[] { new Character(20, 20, 5, 5, 5, 2, 1, 2, 1, "bad dude", "overworldSprite") };
+            party = new Character[] { new Character(20, 20, 5, 5, 6, 3, 10, 2, 1, 0, "speedMan", "overworldSprite") };
+            enemy = new Character[] { new Character(20, 20, 5, 5, 3, 2, 1, 2, 1, 100, "bad dude", "overworldSprite") };
             Combat = new Combat(party, enemy);
             base.Initialize();
         }
@@ -131,7 +131,7 @@ namespace DDRPG
             int i = 0;
             foreach (Character c in Combat._enemies)
             {
-                Combat._enemies[i] = new Character(mxhp, mxhp, mxmp, mxmp, rng.Next(1, 10), rng.Next(1, 10), rng.Next(1, 8), rng.Next(1, 10), rng.Next(1, 5), "bad dude", "overworldSprite");
+                Combat._enemies[i] = new Character(mxhp, mxhp, mxmp, mxmp, rng.Next(1, 10), rng.Next(1, 10), rng.Next(1, 8), rng.Next(1, 10), rng.Next(1, 5), rng.Next(1, 200), "bad dude", "overworldSprite");
                 Combat._enemies[i].LoadContent(Content);
             }
             i = 0;

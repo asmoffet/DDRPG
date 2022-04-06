@@ -28,6 +28,9 @@ namespace DDRPG
         public int spd;
         public int def;
 
+        public int exp = 0;
+        public int nxtlvl = 100;
+
         public Texture2D texture;
         private string txtreName;
 
@@ -37,7 +40,7 @@ namespace DDRPG
         }
 
         //sets the character's stats
-        public Character (int h, int mxhp, int m, int mxmp, int st, int mg, int sp, int df, int lv, string nme, string txtr)
+        public Character (int h, int mxhp, int m, int mxmp, int st, int mg, int sp, int df, int lv, int xp, string nme, string txtr)
         {
             hp = h;
             maxhp = mxhp;
@@ -50,6 +53,7 @@ namespace DDRPG
             name = nme;
             lvl = lv;
             txtreName = txtr;
+            exp = xp;
         }
 
         //basic physical attack function
@@ -83,6 +87,31 @@ namespace DDRPG
                     target.hp = 0;
                 }
             }
+        }
+
+
+        public void levelUp()
+        {
+            Random rng = new Random();
+            
+
+            str += rng.Next(1, 5);
+            mgc += rng.Next(1, 5);
+            spd += rng.Next(1, 5);
+            def += rng.Next(1, 5);
+
+            maxmp += rng.Next(1, 5);
+            mp = maxmp;
+
+            maxhp += rng.Next(1, 10);
+            hp = maxhp;
+
+            exp -= nxtlvl;
+            if (exp <= 0)
+            {
+                exp = 0;
+            }
+            nxtlvl = 100 * lvl + rng.Next(10, 100);
         }
     }
 }
