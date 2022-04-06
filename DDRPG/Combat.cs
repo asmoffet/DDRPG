@@ -64,6 +64,7 @@ namespace DDRPG
             }
             if (que[index].PC)
             {
+                //refactor this into a switch using phases. Phase 0 is selecting, Phase 1 is targeting, and phase 2 is the arrow stuff.
                 ks = Keyboard.GetState();
                 if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && !targeting && ks != prevKs)
                 {
