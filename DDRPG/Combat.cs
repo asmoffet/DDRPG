@@ -48,13 +48,25 @@ namespace DDRPG
 
         public bool Update(GameTime gameTime)
         {
-            if (hpSum(_party) || hpSum(_enemies))
+            if (hpSum(_party))
             {
                 return false;
             }
-
+            if (hpSum(_enemies))
+            {
+                foreach(Character c in _party)
+                {
+                    c.exp += _enemies[0].exp;
+                    if(c.exp >= c.nxtlvl)
+                    {
+                        c.levelUp();
+                    }
+                }
+                return false;
+            }
             if (que[index].PC)
             {
+                //refactor this into a switch using phases. Phase 0 is selecting, Phase 1 is targeting, and phase 2 is the arrow stuff.
                 ks = Keyboard.GetState();
                 if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && !targeting && ks != prevKs)
                 {
@@ -130,7 +142,11 @@ namespace DDRPG
             foreach(Character c in _party)
             {
                 spriteBatch.Draw(c.texture, position,  null, Color.White, 0f, Vector2.Zero, 2f,SpriteEffects.None, 0);
-                spriteBatch.DrawString(sf,"Hp: " + c.hp.ToString(), position - new Vector2(-100, 15), Color.White);
+                spriteBatch.DrawString(sf,"Hp: " + c.hp.ToString() + "/" + c.maxhp.ToString(), position - new Vector2(-100, 15), Color.White);
+                spriteBatch.DrawString(sf, "Mp: " + c.mp.ToString() + "/" + c.maxmp.ToString(), position - new Vector2(-100, 0), Color.White);
+                spriteBatch.DrawString(sf, "Strength: " + c.str.ToString(), position - new Vector2(-100, -15), Color.White);
+                spriteBatch.DrawString(sf, "Magic: " + c.mgc.ToString(), position - new Vector2(-100, -30), Color.White);
+                spriteBatch.DrawString(sf, "Speed: " + c.spd.ToString(), position - new Vector2(-100, -45), Color.White);
                 position.Y += 100;
             }
 
