@@ -15,11 +15,12 @@ namespace DDRPG
         private Character[] que;
         private KeyboardState ks;
         private KeyboardState prevKs;
+        cube Cube;
         private int pos = 0;
         public int index = 0;
         private bool targeting = false;
         private int target = 0;
-        public Combat(Character[] party, Character[] enemy)
+        public Combat(Character[] party, Character[] enemy, cube cube)
         {
             IComparer spdComparer = new SPDCompair();
             que = new Character[party.Length + enemy.Length];
@@ -31,6 +32,7 @@ namespace DDRPG
             addToQue(_enemies, enemy, 0);
             addToQue(_party, party, 0);
             Array.Sort(que, spdComparer);
+            Cube = cube;
         }
 
         private int addToQue(Character[] que, Character[] array,int start)
@@ -44,7 +46,7 @@ namespace DDRPG
         }
 
 
-        public bool Update()
+        public bool Update(GameTime gameTime)
         {
             if (hpSum(_party) || hpSum(_enemies))
             {
@@ -103,6 +105,7 @@ namespace DDRPG
                 que[index].phisicalAttack(_party[index]);
             }
             prevKs = ks;
+            Cube.Update(gameTime);
             return true;
         }
 
@@ -136,7 +139,8 @@ namespace DDRPG
             {
                 if(c.hp > 0)
                 {
-                    spriteBatch.Draw(c.texture, position, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0);
+                    Cube.Draw();
+                    //spriteBatch.Draw(c.texture, position, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0);
                     spriteBatch.DrawString(sf, "Hp: " + c.hp.ToString(), position - new Vector2(100, 15), Color.White);
                     position.Y += 100;
                 }
