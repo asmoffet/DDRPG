@@ -38,7 +38,7 @@ namespace DDRPG
             party = new Character[] { new Character(20, 20, 5, 5, 6, 3, 10, 2, 1, 0, "speedMan", "overworldSprite") };
             enemy = new Character[] { new Character(20, 20, 5, 5, 3, 2, 1, 2, 1, 100, "bad dude", "overworldSprite") };
             cube = new cube(this);
-            Combat = new Combat(party, enemy, cube);
+            Combat = new Combat(party, enemy, cube, Content);
             base.Initialize();
         }
 

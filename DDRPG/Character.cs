@@ -11,7 +11,7 @@ namespace DDRPG
     {
         string name;
         int lvl;
-
+        
         public bool PC = false;
 
         //Health Max and Current
@@ -75,13 +75,14 @@ namespace DDRPG
         //basic magic attack function
         public void magicalAttack( Character target)
         {
+            
             if (target.def >= (mgc + lvl))
             {
                 target.hp -= 1;
             }
             else
             {
-                target.hp -= mgc + lvl - target.def;
+                target.hp -= (mgc + lvl - target.def) * 2;
                 if (target.hp < 0)
                 {
                     target.hp = 0;

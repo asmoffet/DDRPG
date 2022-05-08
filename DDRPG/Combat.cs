@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Content;
 
 namespace DDRPG
 {
@@ -13,14 +14,22 @@ namespace DDRPG
         public Character[] _enemies;
         public Character[] _party;
         private Character[] que;
+
         private KeyboardState ks;
         private KeyboardState prevKs;
+
         cube Cube;
+        Texture2D arrowTexture;
+
         private int pos = 0;
         public int index = 0;
         private bool targeting = false;
         private int target = 0;
-        public Combat(Character[] party, Character[] enemy, cube cube)
+
+        private Arrow[] arrows;
+        private int arrowQue = 0;
+
+        public Combat(Character[] party, Character[] enemy, cube cube, ContentManager content)
         {
             IComparer spdComparer = new SPDCompair();
             que = new Character[party.Length + enemy.Length];
@@ -33,6 +42,12 @@ namespace DDRPG
             addToQue(_party, party, 0);
             Array.Sort(que, spdComparer);
             Cube = cube;
+            arrows = new Arrow[que.Length * 4];
+            for (int i = 0; i < arrows.Length; i++)
+            {
+                arrows[i] = new Arrow(' ', 1344);
+            }
+            arrowTexture = content.Load<Texture2D>("arrows");
         }
 
         private int addToQue(Character[] que, Character[] array,int start)
@@ -64,6 +79,7 @@ namespace DDRPG
                 }
                 return false;
             }
+            //pre arrow phase
             if (que[index].PC)
             {
                 //refactor this into a switch using phases. Phase 0 is selecting, Phase 1 is targeting, and phase 2 is the arrow stuff.
@@ -104,6 +120,7 @@ namespace DDRPG
                     }
                     else
                     {
+                        que[index].mp -= 2;
                         que[index].magicalAttack(_enemies[target]);  
                     }
                     targeting = false;
@@ -112,10 +129,19 @@ namespace DDRPG
             }
             else
             {
+                char[] dirs = { 'u', 'd', 'l', 'r' };
                 Random rn = new Random();
                 index = rn.Next(0, _party.Length - 1);
-                que[index].phisicalAttack(_party[index]);
+                
+                for(int i = 0; i < 4; i++)
+                {
+                    int dist = 1280 + (64 * arrowQue);
+                    arrows[arrowQue] = new Arrow(dirs[rn.Next(0, 3)], dist);
+                    arrowQue++;
+                }
+                //que[index].phisicalAttack(_party[index]);
             }
+            //post arrow phase
             prevKs = ks;
             Cube.Update(gameTime);
             return true;
@@ -138,6 +164,10 @@ namespace DDRPG
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch, SpriteFont sf)
         {
+            foreach(Arrow a in arrows)
+            {
+                a.Draw(gameTime, spriteBatch, arrowTexture);
+            }
             Vector2 position = new Vector2(50, 50);
             foreach(Character c in _party)
             {

@@ -43,7 +43,7 @@ namespace DDRPG
             float angle = (float)gameTime.TotalGameTime.TotalSeconds;
             effect.View = Matrix.CreateRotationY(angle) * Matrix.CreateLookAt(
                 new Vector3(0, 5, -10),
-                new Vector3(2.5f, -3, 0),
+                new Vector3(2f, -3, 0),
                 Vector3.Up
             );
         }
