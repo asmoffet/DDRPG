@@ -26,6 +26,10 @@ namespace DDRPG
         private bool targeting = false;
         private int target = 0;
 
+        private bool attacking = false;
+        private int plyrDmg;
+        private int enemDmg;
+
         private Arrow[] arrows;
         private int arrowQue = 0;
 
@@ -45,7 +49,7 @@ namespace DDRPG
             arrows = new Arrow[que.Length * 4];
             for (int i = 0; i < arrows.Length; i++)
             {
-                arrows[i] = new Arrow(' ', 1344);
+                arrows[i] = new Arrow(' ', 1344, ' ', 0, 0);
             }
             arrowTexture = content.Load<Texture2D>("arrows");
         }
@@ -63,6 +67,7 @@ namespace DDRPG
 
         public bool Update(GameTime gameTime)
         {
+            ks = Keyboard.GetState();
             if (hpSum(_party))
             {
                 return false;
@@ -80,68 +85,192 @@ namespace DDRPG
                 return false;
             }
             //pre arrow phase
-            if (que[index].PC)
+            if (!attacking)
             {
-                //refactor this into a switch using phases. Phase 0 is selecting, Phase 1 is targeting, and phase 2 is the arrow stuff.
-                ks = Keyboard.GetState();
-                if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && !targeting && ks != prevKs)
+                
+                if (que[index].PC)
                 {
-                    pos = 1;
-                }
-                else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && !targeting && ks != prevKs)
-                {
-                    pos = 0;
-                }
-                if (ks.IsKeyDown(Keys.Space) && !targeting && ks != prevKs)
-                {
-                    targeting = true;
-                }
-                if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && targeting && ks != prevKs)
-                {
-                    target++;
-                    if(target >= _enemies.Length)
+                    //refactor this into a switch using phases. Phase 0 is selecting, Phase 1 is targeting, and phase 2 is the arrow stuff.
+                    
+                    //choosing attack type this is a really gross way of doing it but i really can't be bothered to program something cleaner
+                    if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && !targeting && ks != prevKs)
                     {
-                        target = 0;
+                        pos = 1;
+                    }
+                    else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && !targeting && ks != prevKs)
+                    {
+                        pos = 0;
+                    }
+                    //locking in your selection and choosing an enemy even though fighting multiple enemies will probably not be implimented
+                    if (ks.IsKeyDown(Keys.Space) && !targeting && ks != prevKs)
+                    {
+                        targeting = true;
+                    }
+                    //choosing different enemies eventhough it will only be C U B E
+                    if ((ks.IsKeyDown(Keys.Up) || ks.IsKeyDown(Keys.W)) && targeting && ks != prevKs)
+                    {
+                        target++;
+                        if (target >= _enemies.Length)
+                        {
+                            target = 0;
+                        }
+                    }
+                    else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && targeting && ks != prevKs)
+                    {
+                        target--;
+                        if (target < 0)
+                        {
+                            target = _enemies.Length - 1;
+                        }
+                    }
+                    //locking in your attack needs to be updated...
+                    if (ks.IsKeyDown(Keys.Space) && targeting && ks != prevKs)
+                    {
+                        if (pos == 0)
+                        {
+                            char[] dirs = { 'u', 'd', 'l', 'r' };
+                            Random rn = new Random();
+                            rn.Next(0, _party.Length - 1);
+                            for (int i = 0; i < 4; i++)
+                            {
+
+                                int dist = 1280 + (64 * arrowQue);
+                                arrows[arrowQue].changeArrow(dirs[rn.Next(0, 3)], dist, 'p', target, index);
+                                arrowQue++;
+                            }
+                        }
+                        else
+                        {
+                            char[] dirs = { 'u', 'd', 'l', 'r' };
+                            Random rn = new Random();
+                            rn.Next(0, _party.Length - 1);
+                            for (int i = 0; i < 4; i++)
+                            {
+
+                                int dist = 1280 + (64 * arrowQue);
+                                arrows[arrowQue].changeArrow(dirs[rn.Next(0, 3)], dist, 'm', target, index);
+                                arrowQue++;
+                            };
+                        }
+                        targeting = false;
+                        index++;
                     }
                 }
-                else if ((ks.IsKeyDown(Keys.Down) || ks.IsKeyDown(Keys.S)) && targeting && ks != prevKs)
+                //enemy ai for defending
+                else
                 {
-                    target--;
-                    if (target < 0)
+                    char[] dirs = { 'u', 'd', 'l', 'r' };
+                    Random rn = new Random();
+                    target = rn.Next(0, _party.Length - 1);
+
+                    for (int i = 0; i < 4; i++)
                     {
-                        target = _enemies.Length - 1;
+                        int dist = 1280 + (64 * arrowQue);
+                        arrows[arrowQue].changeArrow(dirs[rn.Next(0, 3)], dist, 'e', target, index);
+                        arrowQue++;
                     }
-                }
-                if (ks.IsKeyDown(Keys.Space) && targeting && ks != prevKs)
-                {
-                    if(pos == 0)
-                    {
-                        que[index].phisicalAttack(_enemies[target]);
-                    }
-                    else
-                    {
-                        que[index].mp -= 2;
-                        que[index].magicalAttack(_enemies[target]);  
-                    }
-                    targeting = false;
+                    enemDmg = que[index].phisicalAttack(_party[target]);
                     index++;
+                    
+                }
+                if (index >= que.Length)
+                {
+                    index = 0;
+                    attacking = true;
                 }
             }
+
+            //in arrow phase display both enemie's damage and player's attack 
+            //when enemy goes to attack player decrease the damage the enemy deals
+            // when player attacks increase the damage player deals
+
+            //if arrow is < 0 then it was an enemy attack if not player attack
+            //denote attack types by using 'p' for physical 'm' for magic 'e' for enemy
+            //arrow phase
             else
             {
-                char[] dirs = { 'u', 'd', 'l', 'r' };
-                Random rn = new Random();
-                index = rn.Next(0, _party.Length - 1);
-                
-                for(int i = 0; i < 4; i++)
+                bool arrowsActive = false;
+                foreach (Arrow a in arrows)
                 {
-                    int dist = 1280 + (64 * arrowQue);
-                    arrows[arrowQue] = new Arrow(dirs[rn.Next(0, 3)], dist);
-                    arrowQue++;
+                    if (a != null)
+                    {
+                        
+                        if (a.active)
+                        {
+
+                            if (a.atktyp == 'e')
+                            {
+                                enemDmg += a.update(que[a.target], que[a.user], ks, prevKs);
+                                if(enemDmg <= 1)
+                                {
+                                    enemDmg = 1;
+                                }
+                            }
+                            else
+                            {
+                                plyrDmg += a.update(que[a.user], que[a.target], ks, prevKs);
+                            }
+                            arrowsActive = true;
+                            break;
+                        }
+                    }
+
                 }
-                //que[index].phisicalAttack(_party[index]);
+                if (!arrowsActive)
+                {
+                    attacking = false;
+                    foreach (Character c in _enemies)
+                    {
+                        c.hp -= plyrDmg;
+                        if(c.hp < 0)
+                        {
+                            c.hp = 0;
+                        }
+                    }
+                    if (hpSum(_enemies))
+                    {
+                        foreach (Character c in _party)
+                        {
+                            c.exp += _enemies[0].exp;
+                            if (c.exp >= c.nxtlvl)
+                            {
+                                c.levelUp();
+                            }
+                        }
+                        return false;
+                    }
+                    foreach (Character c in _party)
+                    {
+                        c.hp -= enemDmg;
+                        if (c.hp < 0)
+                        {
+                            c.hp = 0;
+                        }
+                    }
+                    if (hpSum(_party))
+                    {
+                        return false;
+                    }
+                    arrowQue = 0;
+                }
+                else
+                {
+                    foreach (Arrow a in arrows)
+                    {
+                        if (a != null && a.active)
+                        {
+                            a.moveArrow();
+                        }
+                        if (a != null && a.position.X < -64)
+                        {
+                            a.active = false;
+                        }
+                    }
+                }
+                
             }
-            //post arrow phase
+
+
             prevKs = ks;
             Cube.Update(gameTime);
             return true;
@@ -194,13 +323,17 @@ namespace DDRPG
             }
             position = new Vector2(1080 , 25 + 100 * target);
             spriteBatch.DrawString(sf, "Target", position - new Vector2(100, 15), Color.White);
-            if(pos == 0)
+            if(pos == 0 && !attacking)
             {
                 spriteBatch.DrawString(sf, "Physical Attack", new Vector2(600, 500), Color.White);
             }
-            else if (pos == 1)
+            else if (pos == 1 && !attacking)
             {
                 spriteBatch.DrawString(sf, "Magical Attack", new Vector2(600, 500), Color.White);
+            }
+            else if (attacking)
+            {
+                spriteBatch.DrawString(sf, " Enemy Attack: " + (enemDmg).ToString() + " Player Attack: " + plyrDmg.ToString(), new Vector2(500, 300), Color.White);
             }
         }
     }

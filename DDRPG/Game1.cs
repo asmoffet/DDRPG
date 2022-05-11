@@ -35,8 +35,8 @@ namespace DDRPG
             _tilemap = new Tilemap("map.txt");
             _player = new Player();
             //hp hpmax mp mpmax str mgc spd def lvl
-            party = new Character[] { new Character(20, 20, 5, 5, 6, 3, 10, 2, 1, 0, "speedMan", "overworldSprite") };
-            enemy = new Character[] { new Character(20, 20, 5, 5, 3, 2, 1, 2, 1, 100, "bad dude", "overworldSprite") };
+            party = new Character[] { new Character(20, 20, 6, 6, 10, 5, 20, 3, 1, 0, "speedMan", "overworldSprite") };
+            enemy = new Character[] { new Character(50, 50, 6, 6, 10, 5, 1, 4, 1, 100, "bad dude", "overworldSprite") };
             cube = new cube(this);
             Combat = new Combat(party, enemy, cube, Content);
             base.Initialize();
@@ -109,7 +109,7 @@ namespace DDRPG
             {
                 combat = Combat.Update(gameTime);
                 int i = 0;
-                foreach( Character c in Combat._enemies)
+                foreach (Character c in Combat._enemies)
                 {
                     enemy[i] = c;
                     i++;
@@ -129,12 +129,13 @@ namespace DDRPG
         private void generateEnemies()
         {
             Random rng = new Random();
-            int mxhp = rng.Next(1, 30);
+            int mxhp = rng.Next(50, 300);
             int mxmp = rng.Next(1, 10);
             int i = 0;
             foreach (Character c in Combat._enemies)
             {
-                Combat._enemies[i] = new Character(mxhp, mxhp, mxmp, mxmp, rng.Next(1, 10), rng.Next(1, 10), rng.Next(1, 8), rng.Next(1, 10), rng.Next(1, 5), rng.Next(1, 200), "bad dude", "overworldSprite");
+                //hp hpmax mp mpmax str mgc spd def lvl
+                Combat._enemies[i] = new Character(mxhp, mxhp, mxmp, mxmp, rng.Next(1, 25), rng.Next(1, 10), rng.Next(1, 25), rng.Next(1, 10), rng.Next(1, 5), rng.Next(1, 300), "bad dude", "overworldSprite");
                 Combat._enemies[i].LoadContent(Content);
             }
             i = 0;

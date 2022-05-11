@@ -57,37 +57,27 @@ namespace DDRPG
         }
 
         //basic physical attack function
-        public void phisicalAttack(Character target)
+        public int phisicalAttack(Character target)
         {
-            if(target.def >= (str + lvl))
-            {
-                target.hp -= 1;
+            int dmg = 1;
+            if (target.def < (str + lvl))
+            { 
+                dmg = str + lvl-target.def; 
+                
             }
-            else
-            {
-                target.hp -= str + lvl-target.def; 
-                if(target.hp < 0)
-                {
-                    target.hp = 0;
-                }
-            }
+            return dmg;
         }
         //basic magic attack function
-        public void magicalAttack( Character target)
+        public int magicalAttack( Character target)
         {
-            
-            if (target.def >= (mgc + lvl))
+            int dmg = 1;
+            if (target.def < (mgc + lvl) && mp >= 3)
             {
-                target.hp -= 1;
+                dmg = (mgc + lvl - target.def) * 2;
+                mp -= 3;
             }
-            else
-            {
-                target.hp -= (mgc + lvl - target.def) * 2;
-                if (target.hp < 0)
-                {
-                    target.hp = 0;
-                }
-            }
+
+            return dmg;
         }
 
 
