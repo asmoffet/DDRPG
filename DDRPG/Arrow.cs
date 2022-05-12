@@ -145,12 +145,20 @@ namespace DDRPG
             int dmg = 0;
             if (dir == key && patk == 'p')
             {
-                dmg = p.phisicalAttack(e);
+                dmg = e.phisicalAttack(p)  / 4;
+                if (dmg <= 0)
+                {
+                    dmg = 1;
+                }
 
             }
             else if (dir == key && patk == 'm')
             {
-                dmg = p.magicalAttack(e);
+                dmg = e.magicalAttack(p)  / 4;
+                if (dmg <= 0)
+                {
+                    dmg = 1;
+                }
             }
             else if (dir == key && patk == 'e')
             {

@@ -32,7 +32,7 @@ namespace DDRPG
             if ((keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A)) && prevKeyboardState != keyboardState) { position += new Vector2(-1, 0); dir = 1; }
             if ((keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)) && prevKeyboardState != keyboardState) { position += new Vector2(1, 0); dir = 0; }
             CheckBounds(viewport);
-            prevKeyboardState = Keyboard.GetState();
+            prevKeyboardState = keyboardState;
         }
 
         public void Draw(GameTime gameTime, SpriteBatch spriteBatch)

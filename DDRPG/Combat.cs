@@ -176,7 +176,9 @@ namespace DDRPG
                 if (index >= que.Length)
                 {
                     index = 0;
+                    target = 0;
                     attacking = true;
+                    
                 }
             }
 
@@ -219,6 +221,10 @@ namespace DDRPG
                 if (!arrowsActive)
                 {
                     attacking = false;
+                    pos = 0;
+                    index = 0;
+                    target = 0;
+                    arrowQue = 0;
                     foreach (Character c in _enemies)
                     {
                         c.hp -= plyrDmg;
@@ -229,6 +235,7 @@ namespace DDRPG
                     }
                     if (hpSum(_enemies))
                     {
+                        
                         foreach (Character c in _party)
                         {
                             c.exp += _enemies[0].exp;
@@ -249,9 +256,10 @@ namespace DDRPG
                     }
                     if (hpSum(_party))
                     {
+                        
                         return false;
                     }
-                    arrowQue = 0;
+                    
                 }
                 else
                 {
@@ -297,15 +305,15 @@ namespace DDRPG
             {
                 a.Draw(gameTime, spriteBatch, arrowTexture);
             }
-            Vector2 position = new Vector2(50, 50);
+            Vector2 position = new Vector2(10, 10);
             foreach(Character c in _party)
             {
-                spriteBatch.Draw(c.texture, position,  null, Color.White, 0f, Vector2.Zero, 2f,SpriteEffects.None, 0);
-                spriteBatch.DrawString(sf,"Hp: " + c.hp.ToString() + "/" + c.maxhp.ToString(), position - new Vector2(-100, 15), Color.White);
-                spriteBatch.DrawString(sf, "Mp: " + c.mp.ToString() + "/" + c.maxmp.ToString(), position - new Vector2(-100, 0), Color.White);
-                spriteBatch.DrawString(sf, "Strength: " + c.str.ToString(), position - new Vector2(-100, -15), Color.White);
-                spriteBatch.DrawString(sf, "Magic: " + c.mgc.ToString(), position - new Vector2(-100, -30), Color.White);
-                spriteBatch.DrawString(sf, "Speed: " + c.spd.ToString(), position - new Vector2(-100, -45), Color.White);
+                spriteBatch.Draw(c.texture, position,  null, Color.White, 0f, Vector2.Zero, .5f,SpriteEffects.None, 0);
+                spriteBatch.DrawString(sf,"Hp: " + c.hp.ToString() + "/" + c.maxhp.ToString(), position + new Vector2(130, -5), Color.White);
+                spriteBatch.DrawString(sf, "Mp: " + c.mp.ToString() + "/" + c.maxmp.ToString(), position + new Vector2(130, 10), Color.White);
+                spriteBatch.DrawString(sf, "Strength: " + c.str.ToString(), position + new Vector2(130, 25), Color.White);
+                spriteBatch.DrawString(sf, "Magic: " + c.mgc.ToString(), position + new Vector2(130, 40), Color.White);
+                spriteBatch.DrawString(sf, "Speed: " + c.spd.ToString(), position + new Vector2(130, 55), Color.White);
                 position.Y += 100;
             }
 

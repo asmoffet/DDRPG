@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Media;
 
 namespace DDRPG
 {
@@ -19,6 +20,9 @@ namespace DDRPG
         private SpriteFont arial;
         private Combat Combat;
         private cube cube;
+
+        private Song backgroundMusic;
+
         public Game1()
         {
             _graphics = new GraphicsDeviceManager(this);
@@ -35,7 +39,7 @@ namespace DDRPG
             _tilemap = new Tilemap("map.txt");
             _player = new Player();
             //hp hpmax mp mpmax str mgc spd def lvl
-            party = new Character[] { new Character(20, 20, 6, 6, 10, 5, 20, 3, 1, 0, "speedMan", "overworldSprite") };
+            party = new Character[] { new Character(20, 20, 6, 6, 10, 5, 20, 3, 1, 0, "speedMan", "Ghost") };
             enemy = new Character[] { new Character(50, 50, 6, 6, 10, 5, 1, 4, 1, 100, "bad dude", "overworldSprite") };
             cube = new cube(this);
             Combat = new Combat(party, enemy, cube, Content);
@@ -57,7 +61,9 @@ namespace DDRPG
                 c.LoadContent(Content);
             }
             arial = Content.Load<SpriteFont>("arial");
-
+            backgroundMusic = Content.Load<Song>("New_Project");
+            MediaPlayer.IsRepeating = true;
+            MediaPlayer.Play(backgroundMusic);
             // TODO: use this.Content to load your game content here
         }
 
@@ -69,7 +75,7 @@ namespace DDRPG
             // TODO: Add your update logic here
             if (!combat)
             {
-                _player.Update(gameTime, GraphicsDevice.Viewport);
+                
                 if (_tilemap._map[(int)(_player.position.X + _player.position.Y * 10)] == 11)
                 {
                     if (Combat.hpSum(enemy))
@@ -104,6 +110,7 @@ namespace DDRPG
                     }
 
                 }
+                _player.Update(gameTime, GraphicsDevice.Viewport);
             }
             else
             {
