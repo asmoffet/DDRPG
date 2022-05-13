@@ -322,9 +322,18 @@ namespace DDRPG
             {
                 if(c.hp > 0)
                 {
-                    Cube.Draw();
+                    if(c.exp == 0)
+                    {
+                        spriteBatch.Draw(c.texture, new Vector2(745, 10), null, Color.White, 0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0);
+                    }
+                    else
+                    {
+                        Cube.Draw();
+                        spriteBatch.DrawString(sf, "Hp: " + c.hp.ToString(), position - new Vector2(100, 15), Color.White);
+                    }
+                    
                     //spriteBatch.Draw(c.texture, position, null, Color.White, 0f, Vector2.Zero, 2f, SpriteEffects.None, 0);
-                    spriteBatch.DrawString(sf, "Hp: " + c.hp.ToString(), position - new Vector2(100, 15), Color.White);
+                    
                     position.Y += 100;
                 }
                 

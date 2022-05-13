@@ -20,6 +20,13 @@
 /processorParam:TextureFormat=Compressed
 /build:arial.spritefont
 
+#begin arialBig.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:arialBig.spritefont
+
 #begin arrows.png
 /importer:TextureImporter
 /processor:TextureProcessor
@@ -31,6 +38,18 @@
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
 /build:arrows.png
+
+#begin Eternal.png
+/importer:TextureImporter
+/processor:TextureProcessor
+/processorParam:ColorKeyColor=255,0,255,255
+/processorParam:ColorKeyEnabled=True
+/processorParam:GenerateMipmaps=False
+/processorParam:PremultiplyAlpha=True
+/processorParam:ResizeToPowerOfTwo=False
+/processorParam:MakeSquare=False
+/processorParam:TextureFormat=Color
+/build:Eternal.png
 
 #begin Ghost.png
 /importer:TextureImporter

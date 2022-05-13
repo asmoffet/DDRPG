@@ -40,7 +40,7 @@ namespace DDRPG
         }
 
         //sets the character's stats
-        public Character (int h, int mxhp, int m, int mxmp, int st, int mg, int sp, int df, int lv, int xp, string nme, string txtr)
+        public Character (int h, int mxhp, int m, int mxmp, int st, int mg, int sp, int df, int lv, int xp, string nme, string txtr, bool pc)
         {
             hp = h;
             maxhp = mxhp;
@@ -54,6 +54,7 @@ namespace DDRPG
             lvl = lv;
             txtreName = txtr;
             exp = xp;
+            PC = pc;
         }
 
         //basic physical attack function
