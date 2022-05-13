@@ -33,8 +33,8 @@ namespace DDRPG
         // \n every 25
         private string[] quote = { "Why must you go on."
                 , "When you keep trying to\ninterject yourself in worlds\nyou do not belong in. "
-                , "Oh Ghost, when will you stop."
-                , "Why do you end it the same way."
+                , "Oh Ghost, when will\n you stop."
+                , "Why do you end it the\n same way."
                 , "We still have hope.\nYou can still stop."};
 
         public Game1()
@@ -141,10 +141,10 @@ namespace DDRPG
                         _graphics.PreferredBackBufferWidth = 640;
                         _graphics.PreferredBackBufferHeight = 640;
                         _graphics.ApplyChanges();
-                        _tilemap._map[(int)(_player.position.X + _player.position.Y * 10)] = 4;
+                        _tilemap._map[(int)(_player.position.X + _player.position.Y * 10)] = 9;
                         
                         battleEnd = true;
-                        
+                        bossfight = false;
                         timer = 5;
                         qnum++;
                     }
@@ -160,6 +160,7 @@ namespace DDRPG
                             i++;
                         }
                         _player.position.X -= 1;
+                        bossfight = false;
                     }
                     else
                     {
